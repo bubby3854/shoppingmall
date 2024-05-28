@@ -1,16 +1,22 @@
 package com.example.goshopping.controller;
 
-import com.example.goshopping.domain.Product;
-import com.example.goshopping.domain.ProductRepository;
-import jakarta.servlet.http.HttpSession;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import com.example.goshopping.domain.User;
-import com.example.goshopping.domain.UserRepository;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import com.example.goshopping.domain.Product;
+import com.example.goshopping.domain.ProductRepository;
+import com.example.goshopping.domain.User;
+import com.example.goshopping.domain.UserRepository;
+
+import jakarta.servlet.http.HttpSession;
 
 @Controller
 public class UserController {
@@ -44,7 +50,33 @@ public class UserController {
     }
 
     @PostMapping("/signup")
-    public String signupSubmit(@ModelAttribute User user) {
+    public String signupSubmit(@ModelAttribute User user, @RequestParam("confirmUpw") String confirmUpw, Model model) {
+        StringBuilder errorMessage = new StringBuilder();
+
+        if (user.getUid() == null || user.getUid().isEmpty()) {
+            errorMessage.append("User ID is required.\n");
+        }
+        if (user.getUpw() == null || user.getUpw().isEmpty()) {
+            errorMessage.append("Password is required.\n");
+        }
+        if (confirmUpw == null || confirmUpw.isEmpty()) {
+            errorMessage.append("Password confirmation is required.\n");
+        }
+        if (user.getUpw() != null && !user.getUpw().equals(confirmUpw)) {
+            errorMessage.append("Passwords do not match.\n");
+        }
+        if (user.getUbirth() == null || user.getUbirth().isEmpty()) {
+            errorMessage.append("Birth Date is required.\n");
+        }
+        if (user.getUaddr() == null || user.getUaddr().isEmpty()) {
+            errorMessage.append("Address is required.\n");
+        }
+
+        if (errorMessage.length() > 0) {
+            model.addAttribute("signupError", errorMessage.toString());
+            return "user/signup";
+        }
+
         if ("manager3854".equals(user.getUid())) {
             user.setRole("Manager");
         } else {

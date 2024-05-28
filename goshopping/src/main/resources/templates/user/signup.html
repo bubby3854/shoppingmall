@@ -1,31 +1,41 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Signup</title>
+    <title>Sign Up</title>
+    <script type="text/javascript" th:inline="javascript">
+        function showAlert(message) {
+            if (message && message.trim() !== '') {
+                alert(message);
+            }
+        }
+    </script>
 </head>
 <body>
-<h1>회원가입</h1>
-<form action="#" th:action="@{/signup}" th:object="${user}" method="post">
-    <div>
-        <label for="uid">아이디</label>
-        <input type="text" id="uid" th:field="*{uid}" />
-    </div>
-    <div>
-        <label for="upw">비밀번호</label>
-        <input type="password" id="upw" th:field="*{upw}" />
-    </div>
-    <div>
-        <label for="ubirth">생년월일</label>
-        <input type="text" id="ubirth" th:field="*{ubirth}" />
-    </div>
-    <div>
-        <label for="uaddr">주소</label>
-        <input type="text" id="uaddr" th:field="*{uaddr}" />
-    </div>
-    <div>
-        <button type="submit">회원가입</button>
-    </div>
-</form>
+    <h1>Sign Up</h1>
+    <form th:action="@{/signup}" th:object="${user}" method="post">
+        <label for="uid">User ID:</label>
+        <input type="text" id="uid" th:field="*{uid}"><br>
+
+        <label for="upw">Password:</label>
+        <input type="password" id="upw" th:field="*{upw}"><br>
+
+        <label for="confirmUpw">Confirm Password:</label>
+        <input type="password" id="confirmUpw" name="confirmUpw"><br>
+
+        <label for="ubirth">Birth Date:</label>
+        <input type="date" id="ubirth" th:field="*{ubirth}"><br>
+
+        <label for="uaddr">Address:</label>
+        <input type="text" id="uaddr" th:field="*{uaddr}"><br>
+
+        <input type="submit" value="Sign Up">
+    </form>
+
+    <script type="text/javascript" th:inline="javascript">
+        /*<![CDATA[*/
+        var signupError = /*[[${signupError}]]*/ '';
+        showAlert(signupError);
+        /*]]>*/
+    </script>
 </body>
 </html>
- 
