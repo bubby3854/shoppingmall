@@ -62,7 +62,7 @@
             <form th:action="@{/order/add}" method="post">
                 <input type="hidden" name="productId" th:value="${product.pNo}" />
                 <input type="hidden" name="quantity" th:value="${quantity}" />
-                <label for="address">주소:</label>
+                <label for="address">배송주소:</label>
                 <input type="text" id="address" name="address" required />
                 <label for="paymentMethod">결제 방법:</label>
                 <select id="paymentMethod" name="paymentMethod" required>
