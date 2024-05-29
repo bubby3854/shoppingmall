@@ -60,6 +60,7 @@ public class OrderController {
         }
 
         product.setPStock(product.getPStock() - quantity);
+        product.setPOrder(product.getPOrder() + quantity);  // 주문 수 증가
         productRepository.save(product);
 
         Order order = Order.builder()

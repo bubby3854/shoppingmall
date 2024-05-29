@@ -4,7 +4,50 @@
     <meta charset="UTF-8">
     <title>상품 목록</title>
     <style>
-        /* 스타일은 이전 페이지들과 동일하게 */
+        body {
+            background-image: url('https://radiokorea.com/bulletin/data/file/i_findperson/3519468723_Eu5MFKob_fullertongoldsgym.jpg');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+        .content {
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 1200px;
+            margin: 20px auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        button, a.button-link {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #4CAF50;
+            color: white;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        button:hover, a.button-link:hover {
+            background-color: #45a049;
+        }
+        img {
+            max-width: 100px;
+        }
     </style>
 </head>
 <body>
@@ -32,7 +75,7 @@
                     <td th:text="${product.pStock}"></td>
                     <td><img th:src="${product.pImage}" alt="Product Image" width="100"></td>
                     <td>
-                        <a th:href="@{'/admin/product/edit/' + ${product.pNo}}">수정</a>
+                        <a th:href="@{'/admin/product/edit/' + ${product.pNo}}" class="button-link">수정</a>
                         <form th:action="@{'/admin/product/delete/' + ${product.pNo}}" method="post" style="display:inline;">
                             <button type="submit">삭제</button>
                         </form>
@@ -40,7 +83,7 @@
                 </tr>
             </tbody>
         </table>
-        <a href="/mypage"><button>뒤로 가기</button></a>
+        <a href="/mypage" class="button-link">뒤로 가기</a>
     </div>
     <th:block th:replace="~{fragments/footer :: footer}"></th:block>
 </body>
