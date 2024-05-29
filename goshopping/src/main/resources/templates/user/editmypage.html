@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Sign Up</title>
+    <title>Edit My Page</title>
     <style>
         body {
             background-image: url('https://radiokorea.com/bulletin/data/file/i_findperson/3519468723_Eu5MFKob_fullertongoldsgym.jpg');
@@ -45,10 +45,10 @@
 </head>
 <body>
     <div class="content">
-        <h1>회원가입</h1>
-        <form th:action="@{/signup}" method="post" th:object="${user}">
+        <h1>정보 수정</h1>
+        <form th:action="@{/mypage/edit}" method="post" th:object="${user}">
             <label for="uid">User ID</label>
-            <input type="text" id="uid" th:field="*{uid}" />
+            <input type="text" id="uid" th:field="*{uid}" readonly />
 
             <label for="upw">Password</label>
             <input type="password" id="upw" th:field="*{upw}" />
@@ -63,7 +63,10 @@
             <input type="text" id="uaddr" th:field="*{uaddr}" />
             <button type="button" onclick="execDaumPostcode()">주소 검색</button>
 
-            <button type="submit">가입</button>
+            <label for="role">Role</label>
+            <input type="text" id="role" th:field="*{role}" readonly />
+
+            <button type="submit">수정</button>
         </form>
     </div>
 
@@ -71,12 +74,12 @@
         function execDaumPostcode() {
             new daum.Postcode({
                 oncomplete: function(data) {
-                    document.getElementById('uaddr').value = data.address;
+                    // 팝업에서 검색결과 항목을 클릭했을때 실행할 코드를 작성하는 부분입니다.
+                    document.getElementById('uaddr').value = data.address; // 사용자가 선택한 주소를 입력하는 부분입니다.
                 }
             }).open();
         }
     </script>
 </body>
 </html>
-
 

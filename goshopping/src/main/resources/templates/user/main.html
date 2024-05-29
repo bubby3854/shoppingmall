@@ -3,40 +3,105 @@
 <head>
     <meta charset="UTF-8">
     <title>Main Page</title>
+    <style>
+        body {
+            background-image: url('https://radiokorea.com/bulletin/data/file/i_findperson/3519468723_Eu5MFKob_fullertongoldsgym.jpg');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+        .content {
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 1200px;
+            margin: 20px auto;
+        }
+        .product-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+        }
+        .product-item {
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            padding: 16px;
+            width: 30%;
+            box-sizing: border-box;
+            text-align: center;
+        }
+        .product-item a img {
+            max-width: 100%;
+            height: auto;
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 8px;
+        }
+        .product-item h3 {
+            margin: 0 0 8px;
+        }
+        .product-item p {
+            margin: 0 0 4px;
+        }
+        button {
+            margin: 5px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #4CAF50;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .video-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .low-stock {
+            color: red;
+        }
+    </style>
 </head>
 <body>
-    <h1>GoShopping에 오신 것을 환영합니다!</h1>
-    <div>
-        <div th:if="${loggedIn}">
-            <a href="/mypage"><button>마이페이지</button></a>
-            <a href="/logout"><button>로그아웃</button></a>
+    <th:block th:replace="fragments/header :: header"></th:block>
+    <div class="content">
+        <h1>Design Your Body!!!</h1>
+        <div>
+            <div th:if="${loggedIn}">
+                <a href="/mypage"><button>마이페이지</button></a>
+                <a href="/logout"><button>로그아웃</button></a>
+            </div>
+            <div th:if="${!loggedIn}">
+                <a href="/signup"><button>회원가입</button></a>
+                <a href="/login"><button>로그인</button></a>
+            </div>
         </div>
-        <div th:if="${!loggedIn}">
-            <a href="/signup"><button>회원가입</button></a>
-            <a href="/login"><button>로그인</button></a>
+        <div class="video-container">
+            <h2>Are you Ready?</h2>
+            <iframe width="560" height="315" src="https://www.youtube.com/embed/k8fodIR_mgg?autoplay=1&mute=1&si=EG2hHnLo24TDIBAA" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+        </div>
+        <h2>상품 목록</h2>
+        <div class="product-grid">
+            <div class="product-item" th:each="product : ${productList}">
+                <a th:href="@{'/admin/product/detail/' + ${product.pNo}}">
+                    <img th:src="${product.pImage}" alt="Product Image">
+                </a>
+                <h3 th:text="${product.pName}">상품명</h3>
+                <p th:text="${product.pInfo}">상품정보</p>
+                <p th:text="${product.pPrice}">가격</p>
+                <p class="low-stock">품절임박 잔여 : <span th:text="${product.pStock}"></span></p>
+                <p>총 주문 : <span th:text="${product.pOrder}"></span></p>
+            </div>
         </div>
     </div>
-    <h2>상품 목록</h2>
-    <table border="1">
-        <thead>
-            <tr>
-                <th>상품명</th>
-                <th>상품정보</th>
-                <th>상품가격</th>
-                <th>상품재고</th>
-                <th>주문수량</th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr th:each="product : ${productList}">
-                <td><a th:href="@{'/admin/product/detail/' + ${product.pNo}}" th:text="${product.pName}"></a></td>
-                <td th:text="${product.pInfo}"></td>
-                <td th:text="${product.pPrice}"></td>
-                <td th:text="${product.pStock}"></td>
-                <td th:text="${product.pOrder}"></td>
-            </tr>
-        </tbody>
-    </table>
+    <th:block th:replace="fragments/footer :: footer"></th:block>
 </body>
 </html>
 

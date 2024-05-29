@@ -1,6 +1,13 @@
 package com.example.goshopping.controller;
 
-import com.example.goshopping.domain.*;
+import com.example.goshopping.domain.Cart;
+import com.example.goshopping.domain.CartRepository;
+import com.example.goshopping.domain.Order;
+import com.example.goshopping.domain.OrderRepository;
+import com.example.goshopping.domain.Product;
+import com.example.goshopping.domain.ProductRepository;
+import com.example.goshopping.domain.User;
+import com.example.goshopping.domain.UserRepository;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -23,7 +30,7 @@ public class OrderController {
     @Autowired
     private CartRepository cartRepository;
 
-    @GetMapping("/add")
+    @GetMapping("/form")
     public String showOrderForm(@RequestParam("productId") Long productId, @RequestParam("quantity") int quantity, Model model) {
         Product product = productRepository.findById(productId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid product Id:" + productId));
@@ -47,6 +54,8 @@ public class OrderController {
 
         if (product.getPStock() < quantity) {
             model.addAttribute("errorMessage", "재고가 부족합니다. 현재 재고: " + product.getPStock());
+            model.addAttribute("product", product);
+            model.addAttribute("quantity", quantity);
             return "order/form";
         }
 
@@ -59,6 +68,7 @@ public class OrderController {
                 .quantity(quantity)
                 .address(address)
                 .paymentMethod(paymentMethod)
+                .status("결제 완료")  // 초기 상태 설정
                 .build();
 
         orderRepository.save(order);
@@ -74,7 +84,7 @@ public class OrderController {
         model.addAttribute("orderList", orderRepository.findByUser(user));
         return "user/orders";
     }
-
+    
     @PostMapping("/cancel/{id}")
     public String cancelOrder(@PathVariable("id") Long id, HttpSession session, Model model) {
         String userId = (String) session.getAttribute("userId");
@@ -95,7 +105,7 @@ public class OrderController {
         orderRepository.deleteById(id);
         return "redirect:/order/myorders";
     }
-
+    
     @PostMapping("/order/{id}")
     public String orderProduct(@PathVariable("id") Long id, HttpSession session, Model model) {
         String userId = (String) session.getAttribute("userId");
@@ -105,16 +115,31 @@ public class OrderController {
                 .orElseThrow(() -> new IllegalArgumentException("Invalid cart Id:" + id));
 
         Product product = cart.getProduct();
-        int quantity = cart.getQuantity();
-
-        if (product.getPStock() < quantity) {
+        if (product.getPStock() < cart.getQuantity()) {
             model.addAttribute("errorMessage", "재고가 부족합니다. 현재 재고: " + product.getPStock());
-            return "user/cart";
+            model.addAttribute("product", product);
+            model.addAttribute("quantity", cart.getQuantity());
+            return "order/form";
         }
 
-        model.addAttribute("product", product);
-        model.addAttribute("quantity", quantity);
+        model.addAttribute("product", cart.getProduct());
+        model.addAttribute("quantity", cart.getQuantity());
+        model.addAttribute("order", new Order());  
 
         return "order/form";
+    }
+    
+    @GetMapping("/allorders")
+    public String viewAllOrders(Model model) {
+        model.addAttribute("orderList", orderRepository.findAll());
+        return "admin/orderList";
+    }
+
+    @PostMapping("/updateStatus/{id}")
+    public String updateOrderStatus(@PathVariable("id") Long id, @RequestParam("status") String status) {
+        Order order = orderRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Invalid order Id:" + id));
+        order.setStatus(status);
+        orderRepository.save(order);
+        return "redirect:/order/allorders";
     }
 }

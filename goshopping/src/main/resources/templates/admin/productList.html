@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>상품 목록</title>
+    <style>
+        /* 스타일은 이전 페이지들과 동일하게 */
+    </style>
+</head>
+<body>
+    <th:block th:replace="~{fragments/header :: header}"></th:block>
+    <div class="content">
+        <h1>상품 목록</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th>상품 번호</th>
+                    <th>상품 이름</th>
+                    <th>상품 정보</th>
+                    <th>가격</th>
+                    <th>재고</th>
+                    <th>이미지</th>
+                    <th>액션</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="product : ${productList}">
+                    <td th:text="${product.pNo}"></td>
+                    <td th:text="${product.pName}"></td>
+                    <td th:text="${product.pInfo}"></td>
+                    <td th:text="${product.pPrice}"></td>
+                    <td th:text="${product.pStock}"></td>
+                    <td><img th:src="${product.pImage}" alt="Product Image" width="100"></td>
+                    <td>
+                        <a th:href="@{'/admin/product/edit/' + ${product.pNo}}">수정</a>
+                        <form th:action="@{'/admin/product/delete/' + ${product.pNo}}" method="post" style="display:inline;">
+                            <button type="submit">삭제</button>
+                        </form>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <a href="/mypage"><button>뒤로 가기</button></a>
+    </div>
+    <th:block th:replace="~{fragments/footer :: footer}"></th:block>
+</body>
+</html>
+

@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>상품 상세 페이지</title>
+    <style>
+        body {
+            background-image: url('https://radiokorea.com/bulletin/data/file/i_findperson/3519468723_Eu5MFKob_fullertongoldsgym.jpg');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+        .content {
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            margin: 20px auto;
+            text-align: center;
+        }
+        h1, h2, p {
+            margin: 10px 0;
+        }
+        .quantity-group {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+        .quantity-group label {
+            margin: 0;
+        }
+        .quantity-group input {
+            width: 50px;
+            padding: 5px;
+            text-align: center;
+        }
+        .button-group {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        button, a.button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: #4CAF50;
+            color: white;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+        }
+        button:hover, a.button:hover {
+            background-color: #45a049;
+        }
+        .product-image {
+            max-width: 100%;
+            height: auto;
+            border-bottom: 1px solid #ddd;
+            margin-bottom: 8px;
+        }
+    </style>
+</head>
+<body>
+    <th:block th:replace="~{fragments/header :: header}"></th:block>
+    <div class="content">
+        <h1>상품 상세 페이지</h1>
+        <div>
+            <img th:src="${product.pImage}" alt="Product Image" class="product-image">
+            <h2>상품 이름: <span th:text="${product.pName}"></span></h2>
+            <p>상품 번호: <span th:text="${product.pNo}"></span></p>
+            <p>상품 정보: <span th:text="${product.pInfo}"></span></p>
+            <p>가격: <span th:text="${product.pPrice}"></span></p>
+            <p>재고: <span th:text="${product.pStock}"></span></p>
+            <p>주문 수량: <span th:text="${product.pOrder}"></span></p>
+
+            <div th:if="${session.userRole == 'Manager'}">
+                <a th:href="@{'/admin/product/edit/' + ${product.pNo}}" class="button">수정</a>
+                <form th:action="@{'/admin/product/delete/' + ${product.pNo}}" method="post" style="display:inline;">
+                    <button type="submit">삭제</button>
+                </form>
+            </div>
+
+            <div th:if="${session.userRole == 'Member'}">
+                <form id="cartForm" th:action="@{'/cart/add'}" method="post">
+                    <input type="hidden" name="productId" th:value="${product.pNo}" />
+                    <div class="quantity-group">
+                        <label for="quantity">수량:</label>
+                        <input type="number" id="quantity" name="quantity" min="1" value="1" />
+                    </div>
+                    <div class="button-group">
+                        <button type="button" onclick="confirmCart()">장바구니에 추가</button>
+                        <a id="orderLink" href="#" class="button">주문하기</a>
+                        <a href="/" class="button">뒤로 가기</a>
+                    </div>
+                </form>
+            </div>
+
+            <div th:if="${session.userRole == null}">
+                <div class="button-group">
+                    <button onclick="alertLoginRequired()">장바구니에 추가</button>
+                    <button onclick="alertLoginRequired()">주문하기</button>
+                    <a href="/" class="button">뒤로 가기</a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <th:block th:replace="~{fragments/footer :: footer}"></th:block>
+
+    <script>
+        function alertLoginRequired() {
+            alert('로그인 후 이용해 주세요.');
+            window.location.href = '/';  // 메인 페이지로 이동
+        }
+
+        function confirmCart() {
+            const form = document.getElementById('cartForm');
+            const formData = new FormData(form);
+
+            fetch(form.action, {
+                method: form.method,
+                body: formData,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest' // AJAX 요청임을 서버에 알리기 위해 헤더 추가
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.text();
+            })
+            .then(() => {
+                if (confirm('장바구니를 확인하시겠습니까?')) {
+                    window.location.href = '/cart/mycart';  // 마이페이지의 장바구니 리스트로 이동
+                }
+            })
+            .catch(error => {
+                console.error('There was a problem with the fetch operation:', error);
+            });
+        }
+
+        document.querySelector('input[name="quantity"]').addEventListener('input', function() {
+            const productId = document.querySelector('input[name="productId"]').value;
+            const quantity = this.value;
+            document.getElementById('orderLink').href = `/order/form?productId=${productId}&quantity=${quantity}`;
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const productId = document.querySelector('input[name="productId"]').value;
+            const quantity = document.querySelector('input[name="quantity"]').value;
+            document.getElementById('orderLink').href = `/order/form?productId=${productId}&quantity=${quantity}`;
+        });
+    </script>
+</body>
+</html>
+

@@ -25,14 +25,16 @@ public class Order {
     private int quantity;
     private String address;
     private String paymentMethod;
+    private String status = "결제 완료";
 
     @Builder
-    public Order(User user, Product product, int quantity, String address, String paymentMethod) {
+    public Order(User user, Product product, int quantity, String address, String paymentMethod, String status) {
         this.user = user;
         this.product = product;
         this.quantity = quantity;
         this.address = address;
         this.paymentMethod = paymentMethod;
+        this.status = status;
     }
 }
 

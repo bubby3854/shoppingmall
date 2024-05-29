@@ -3,31 +3,81 @@
 <head>
     <meta charset="UTF-8">
     <title>주문 페이지</title>
+    <style>
+        body {
+            background-image: url('https://radiokorea.com/bulletin/data/file/i_findperson/3519468723_Eu5MFKob_fullertongoldsgym.jpg');
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+        .content {
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 800px;
+            margin: 20px auto;
+            text-align: center;
+        }
+        h1, h2, p {
+            margin: 10px 0;
+        }
+        label, input, select, button {
+            display: block;
+            margin: 10px auto;
+            width: 80%;
+        }
+        button {
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background-color: #4CAF50;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        a.button {
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+        a.button:hover {
+            background-color: #45a049;
+        }
+    </style>
 </head>
 <body>
-    <h1>주문 페이지</h1>
-    <div>
-        <h2>상품 이름: <span th:text="${product.pName}"></span></h2>
-        <p>가격: <span th:text="${product.pPrice}"></span></p>
-        <p>수량: <span th:text="${quantity}"></span></p>
-        <form th:action="@{/order/add}" method="post">
-            <input type="hidden" name="productId" th:value="${product.pNo}" />
-            <input type="hidden" name="quantity" th:value="${quantity}" />
-            <label for="address">주소:</label>
-            <input type="text" id="address" name="address" required />
-            <label for="paymentMethod">결제 방법:</label>
-            <select id="paymentMethod" name="paymentMethod" required>
-                <option value="credit_card">신용카드</option>
-                <option value="bank_transfer">계좌이체</option>
-            </select>
-            <button type="submit" id="orderButton" th:disabled="${product.pStock == 0}">주문하기</button>
-        </form>
+    <div class="content">
+        <h1>주문 페이지</h1>
+        <div>
+            <h2>상품 이름: <span th:text="${product.pName}"></span></h2>
+            <p>가격: <span th:text="${product.pPrice}"></span></p>
+            <p>수량: <span th:text="${quantity}"></span></p>
+            <form th:action="@{/order/add}" method="post">
+                <input type="hidden" name="productId" th:value="${product.pNo}" />
+                <input type="hidden" name="quantity" th:value="${quantity}" />
+                <label for="address">주소:</label>
+                <input type="text" id="address" name="address" required />
+                <label for="paymentMethod">결제 방법:</label>
+                <select id="paymentMethod" name="paymentMethod" required>
+                    <option value="credit_card">신용카드</option>
+                    <option value="bank_transfer">계좌이체</option>
+                </select>
+                <button type="submit" id="orderButton" th:disabled="${product.pStock == 0}">주문하기</button>
+            </form>
+        </div>
+        <a href="/" class="button">뒤로 가기</a>
     </div>
-    <a href="/">뒤로 가기</a>
 
     <script th:inline="javascript">
         /*<![CDATA[*/
-        var stock = [[${product.pStock}]];
+        const stock = [[${product.pStock}]];
         if (stock == 0) {
             alert('빠른 시일 내에 상품을 준비하겠습니다');
         }

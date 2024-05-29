@@ -2,7 +2,7 @@
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>My Page</title>
+    <title>회원 목록</title>
     <style>
         body {
             background-image: url('https://radiokorea.com/bulletin/data/file/i_findperson/3519468723_Eu5MFKob_fullertongoldsgym.jpg');
@@ -19,7 +19,6 @@
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             max-width: 800px;
             margin: 20px auto;
-            text-align: center;
         }
         table {
             width: 100%;
@@ -53,46 +52,38 @@
             background-color: #4CAF50;
             color: white;
             cursor: pointer;
-            flex: 1;
         }
         button:hover {
             background-color: #45a049;
-        }
-        .button-group {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-evenly;
-            gap: 10px;
-        }
-        .button-group a {
-            flex: 1 1 calc(50% - 10px); /* 2줄로 배치, 각 버튼은 50% 너비 */
         }
     </style>
 </head>
 <body>
     <th:block th:replace="~{fragments/header :: header}"></th:block>
     <div class="content">
-        <h1>마이 페이지</h1>
-        <div>
-            <h2>Welcome, <span th:text="${session.userId}">User</span></h2>
-            <div class="button-group">
-                <a href="/mypage/edit"><button>내 정보 수정</button></a>
-                <a href="/cart/mycart"><button>내 장바구니</button></a>
-                <a href="/order/myorders"><button>내 주문</button></a>
-                <a href="/"><button>홈으로</button></a>
-            </div>
-            <div th:if="${session.userRole == 'Manager'}">
-                <h3>관리자 메뉴</h3>
-                <div class="button-group">
-                    <a href="/admin/product/add"><button>상품 등록</button></a>
-                    <a href="/admin/product/list"><button>상품 목록</button></a>
-                    <a href="/admin/users"><button>회원 목록</button></a>
-                    <a href="/admin/orders"><button>회원 주문 내역</button></a>
-                </div>
-            </div>
-        </div>
+        <h1>회원 목록</h1>
+        <table>
+            <thead>
+                <tr>
+                    <th>회원 번호</th>
+                    <th>사용자 ID</th>
+                    <th>생년월일</th>
+                    <th>주소</th>
+                    <th>역할</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr th:each="user : ${userList}">
+                    <td th:text="${user.uno}"></td>
+                    <td th:text="${user.uid}"></td>
+                    <td th:text="${user.ubirth}"></td>
+                    <td th:text="${user.uaddr}"></td>
+                    <td th:text="${user.role}"></td>
+                </tr>
+            </tbody>
+        </table>
+        <a href="/mypage"><button>뒤로 가기</button></a>
     </div>
     <th:block th:replace="~{fragments/footer :: footer}"></th:block>
 </body>
 </html>
-

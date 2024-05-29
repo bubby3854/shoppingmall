@@ -10,7 +10,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.SessionAttribute;
 
+import com.example.goshopping.domain.Order;
+import com.example.goshopping.domain.OrderRepository;
 import com.example.goshopping.domain.Product;
 import com.example.goshopping.domain.ProductRepository;
 import com.example.goshopping.domain.User;
@@ -26,6 +29,10 @@ public class UserController {
 
     @Autowired
     private ProductRepository productRepository;
+    
+
+    @Autowired
+    private OrderRepository orderRepository;
 
     @GetMapping("/")
     public String mainPage(Model model, HttpSession session) {
@@ -111,8 +118,14 @@ public class UserController {
         return "redirect:/";
     }
 
+
+
     @GetMapping("/mypage")
     public String myPage(Model model, HttpSession session) {
+        String userId = (String) session.getAttribute("userId");
+        User user = userRepository.findFirstByUid(userId);
+        model.addAttribute("user", user);
+        
         String userRole = (String) session.getAttribute("userRole");
         if ("Manager".equals(userRole)) {
             Iterable<Product> productList = productRepository.findAll();
@@ -120,5 +133,59 @@ public class UserController {
         }
         return "user/mypage";
     }
+
+    @GetMapping("/mypage/edit")
+    public String editMyPageForm(Model model, @SessionAttribute("userId") String userId) {
+        User user = userRepository.findFirstByUid(userId);
+        model.addAttribute("user", user);
+        return "user/editmypage";
+    }
+
+    @PostMapping("/mypage/edit")
+    public String editMyPageSubmit(@ModelAttribute User user, @RequestParam("confirmUpw") String confirmUpw, HttpSession session, Model model) {
+        StringBuilder errorMessage = new StringBuilder();
+
+        if (user.getUpw() == null || user.getUpw().isEmpty()) {
+            errorMessage.append("Password is required.\n");
+        }
+        if (confirmUpw == null || confirmUpw.isEmpty()) {
+            errorMessage.append("Password confirmation is required.\n");
+        }
+        if (user.getUpw() != null && !user.getUpw().equals(confirmUpw)) {
+            errorMessage.append("Passwords do not match.\n");
+        }
+        if (user.getUbirth() == null || user.getUbirth().isEmpty()) {
+            errorMessage.append("Birth Date is required.\n");
+        }
+        if (user.getUaddr() == null || user.getUaddr().isEmpty()) {
+            errorMessage.append("Address is required.\n");
+        }
+
+        if (errorMessage.length() > 0) {
+            model.addAttribute("editError", errorMessage.toString());
+            return "user/editmypage";
+        }
+
+        userRepository.save(user);
+        session.setAttribute("userId", user.getUid());
+        return "redirect:/mypage";
+    }
+    
+
+    @GetMapping("/admin/users")
+    public String listUsers(Model model) {
+        model.addAttribute("userList", userRepository.findAll());
+        return "admin/userList";
+    }
+
+    @GetMapping("/admin/orders")
+    public String listUserOrders(Model model) {
+        List<Order> orders = orderRepository.findAll();
+        model.addAttribute("orderList", orders);
+        return "admin/orderList";
+    }
+
+  
+    
 }
 
